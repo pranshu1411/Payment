@@ -8,6 +8,8 @@ import { Signin } from "./pages/Signin";
 import { Dashboard } from "./pages/Dashboard";
 import { SendMoney } from "./pages/SendMoney";
 import { Settings } from "./pages/Settings";
+import { UserInfoUpdate } from "./pages/UserInfoUpdate";
+import { UpdatePassword } from "./pages/UpdatePassword";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/send" element={<SendMoney />} />
           <Route path="/settings" element={<Settings/>} />
+          <Route path="/update/personal" element={<UserInfoUpdate />} />
+          <Route path="/update/password" element={<UpdatePassword />} />
         </Routes>
       </BrowserRouter>
     </>
