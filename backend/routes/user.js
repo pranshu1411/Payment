@@ -188,6 +188,11 @@ router.get('/allusers', async (req, res) => {
                 "$regex": filter,
                 "$options": "i"
             }
+        },{
+            username : {
+                "$regex": filter,
+                "$options": "i"
+            }
         }]
     })
 
