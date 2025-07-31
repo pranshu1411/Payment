@@ -13,11 +13,16 @@ const signupSchema = zod.object({
     lastName: zod.string().min(3).max(50)
 });
 
-const updateSchema = zod.object({
+const updatePersonalSchema = zod.object({
     username: zod.string().min(3).max(20).optional(),
-    password: zod.string().min(8).max(20).optional(),
     firstName: zod.string().min(3).max(50).optional(),
     lastName: zod.string().min(3).max(50).optional()
+}).refine(data => data.username || data.firstName || data.lastName, {
+    message: "At least one field is required"
+});
+
+const updatePasswordSchema = zod.object({
+    password: zod.string().min(8).max(20),
 });
 
 const signinBody = zod.object({
@@ -106,9 +111,9 @@ router.post('/signin', async (req, res) => {
 });
 
 
-router.put('/update', userMiddleware, async (req, res) => {
+router.put('/update/personal', userMiddleware, async (req, res) => {
     const body = req.body;
-    const { success } = updateSchema.safeParse(body);
+    const { success } = updatePersonalSchema.safeParse(body);
 
     if (!success) {
         return res.status(411).json({
@@ -131,7 +136,6 @@ router.put('/update', userMiddleware, async (req, res) => {
 
     const updateObj = {};
     if (body.username) updateObj.username = body.username;
-    if (body.password) updateObj.password = await hashPassword(body.password);
     if (body.firstName) updateObj.firstName = body.firstName;
     if (body.lastName) updateObj.lastName = body.lastName;
 
@@ -146,7 +150,31 @@ router.put('/update', userMiddleware, async (req, res) => {
 });
 
 
-router.get('/allusers', userMiddleware, async (req, res) => {
+router.put('/update/password', userMiddleware, async (req, res) => {
+    const body = req.body;
+    const { success } = updatePasswordSchema.safeParse(body);
+
+    if (!success) {
+        return res.status(411).json({
+            message: "Unable to update password, invalid input data"
+        });
+    }
+
+    const updateObj = {};
+    if (body.password) updateObj.password = await hashPassword(body.password);
+
+    await User.updateOne(
+        { _id: req.userId },
+        { $set: updateObj }
+    );
+
+    res.status(200).json({
+        message: "Password updated successfully"
+    });
+});
+
+
+router.get('/allusers', async (req, res) => {
     const filter = req.query.filter || "";
     const allusers = await User.find({
         $or: [{
