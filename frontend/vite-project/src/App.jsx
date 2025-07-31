@@ -10,6 +10,7 @@ import { SendMoney } from "./pages/SendMoney";
 import { Settings } from "./pages/Settings";
 import { UserInfoUpdate } from "./pages/UserInfoUpdate";
 import { UpdatePassword } from "./pages/UpdatePassword";
+import { History } from "./pages/History";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/settings" element={<Settings/>} />
           <Route path="/update/personal" element={<UserInfoUpdate />} />
           <Route path="/update/password" element={<UpdatePassword />} />
+          <Route path="/history" element={<History />}/>
         </Routes>
       </BrowserRouter>
     </>
