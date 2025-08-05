@@ -6,16 +6,18 @@ import { InputBox } from "../components/InputBox"
 import { SubHeading } from "../components/Subheading"
 import axios from "axios";
 import { useNavigate } from "react-router-dom"
+import { toast } from 'sonner';
+import { CheckCircle } from 'lucide-react';
 
 export const Signup = () => {
-    const [emailId, setEmail] = useState("");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const navigate = useNavigate();
+  const [emailId, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-    return <div className="bg-slate-300 h-screen flex justify-center">
+  return <div className="bg-slate-300 h-screen flex justify-center">
     <div className="flex flex-col justify-center">
       <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
         <Heading label={"Sign up"} />
@@ -37,15 +39,24 @@ export const Signup = () => {
         }} placeholder="Doe" label={"Last Name"} />
         <div className="pt-4">
           <Button onClick={async () => {
-            const response = await axios.post("http://localhost:3000/api/user/signup", {
+            try {
+              const response = await axios.post("http://localhost:3000/api/user/signup", {
                 emailId,
                 username,
                 password,
                 firstName,
-                lastName    
-            });
-            localStorage.setItem("token", response.data.token)
-            navigate("/dashboard")
+                lastName
+              });
+              localStorage.setItem("token", response.data.token)
+              toast.success("Account created successfully", {
+                icon: <CheckCircle className='text-green-500' />,
+                duration: 2000,
+              });
+              navigate("/dashboard");
+            } catch (e) {
+              toast.error("Signup unsuccessful")
+            }
+
           }} label={"Sign up"} />
         </div>
         <BottomWarning label={"Already have an account?"} buttonText={"Sign in"} to={"/signin"} />

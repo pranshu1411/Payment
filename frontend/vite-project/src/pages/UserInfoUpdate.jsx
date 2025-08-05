@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { Heading } from "../components/Heading";
 import { SubHeading } from "../components/Subheading";
 import { Appbar } from "../components/Appbar";
+import { toast } from 'sonner';
+import { CheckCircle } from 'lucide-react';
 
 export const UserInfoUpdate = () => {
     const [firstName, setFirstName] = useState("");
@@ -55,10 +57,15 @@ export const UserInfoUpdate = () => {
                                             },
                                         }
                                     );
-                                    alert("Information updated successfully!");
-                                    navigate("/dashboard");
+                                    toast.success("User Information Updated", {
+                                        icon: <CheckCircle className='text-green-500'/>,
+                                        duration: 3000,
+                                    });
+                                    setTimeout(() => {
+                                        navigate("/dashboard", { state: { updated: true } });
+                                    }, 2000);
                                 } catch (error) {
-                                    alert(error.response?.data?.message || "Update failed");
+                                    toast.error("Update failed");
                                 }
                             }}
                             label={"Update"}

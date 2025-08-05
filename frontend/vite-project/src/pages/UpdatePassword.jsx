@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { Heading } from "../components/Heading";
 import { SubHeading } from "../components/Subheading";
 import { Appbar } from "../components/Appbar";
+import { toast } from 'sonner';
+import { CheckCircle } from 'lucide-react';
 
 export const UpdatePassword = () => {
     const [password, setPassword] = useState("");
@@ -36,10 +38,15 @@ export const UpdatePassword = () => {
                                             },
                                         }
                                     );
-                                    alert("Password updated successfully!");
-                                    navigate("/dashboard");
+                                    toast.success("Password Updated", {
+                                        icon: <CheckCircle className='text-green-500' />,
+                                        duration: 3000,
+                                    });
+                                    setTimeout(() => {
+                                        navigate("/dashboard", { state: { updated: true } });
+                                    }, 2000);
                                 } catch (err) {
-                                    alert(err.response?.data?.message || "Update failed");
+                                    toast.error("Update failed");
                                 }
                             }}
                             label={"Update Password"}

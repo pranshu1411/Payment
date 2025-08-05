@@ -11,11 +11,13 @@ import { Settings } from "./pages/Settings";
 import { UserInfoUpdate } from "./pages/UserInfoUpdate";
 import { UpdatePassword } from "./pages/UpdatePassword";
 import { History } from "./pages/History";
+import { Toaster } from "sonner";
 
 function App() {
   return (
     <>
        <BrowserRouter>
+       <Toaster richColors position="top-right" />
         <Routes>
           <Route path="/" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
