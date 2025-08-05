@@ -81,7 +81,7 @@ function User({ user }) {
       <div className="flex justify-end">
         <Button
           onClick={() => {
-            navigate("/send?id=" + user._id + "&name=" + user.firstName);
+            navigate("/send?id=" + user._id + "&name=" + user.firstName + "&username=" + user.username);
           }}
           label={"Send Money"}
         />
