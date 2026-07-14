@@ -15,7 +15,7 @@ import {
   UserCircleIcon,
   Cog6ToothIcon
 } from '@heroicons/react/24/outline';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import logo from '../assets/payme-logo.png';
@@ -31,6 +31,7 @@ function classNames(...classes) {
 
 export const Appbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
@@ -79,8 +80,9 @@ export const Appbar = () => {
             </DisclosureButton>
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-            <div className="flex shrink-0 items-center">
+            <div className="flex shrink-0 items-center cursor-pointer" onClick={() => navigate('/')}>
               <img src={logo} alt="PayMe Logo" className="h-8 w-8 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" />
+              <span className="ml-2 text-xl font-bold tracking-tight text-white hidden sm:block">PayMe</span>
             </div>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
@@ -107,7 +109,7 @@ export const Appbar = () => {
             <Menu as="div" className="relative">
               <MenuButton 
                 onClick={markAsRead}
-                className="group relative rounded-full bg-slate-800/50 p-2 text-slate-400 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-hidden transition-colors border border-white/5 hover:bg-slate-700/50"
+                className="group cursor-pointer relative rounded-full bg-slate-800/50 p-2 text-slate-400 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-hidden transition-colors border border-white/5 hover:bg-slate-700/50"
               >
                 <span className="absolute -inset-1.5" />
                 <span className="sr-only">View notifications</span>
@@ -148,7 +150,7 @@ export const Appbar = () => {
 
             {/* Profile dropdown */}
             <Menu as="div" className="relative ml-4">
-              <MenuButton className="group relative flex rounded-full bg-slate-800/50 p-1 text-sm focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 border border-white/5 hover:bg-slate-700/50 transition-colors">
+              <MenuButton className="group cursor-pointer relative flex rounded-full bg-slate-800/50 p-1 text-sm focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 border border-white/5 hover:bg-slate-700/50 transition-colors">
                 <span className="absolute -inset-1.5" />
                 <span className="sr-only">Open user menu</span>
                 <UserCircleIcon className="size-7 text-slate-400 group-hover:text-white transition-colors" aria-hidden="true" />
@@ -169,11 +171,11 @@ export const Appbar = () => {
                 <MenuItem>
                   <a
                     href="#"
-                    className="block px-4 py-2.5 text-sm text-rose-400 data-focus:bg-rose-500/10 data-focus:text-rose-300 data-focus:outline-hidden font-medium transition-colors"
+                    className="block cursor-pointer px-4 py-2.5 text-sm text-rose-400 data-focus:bg-rose-500/10 data-focus:text-rose-300 data-focus:outline-hidden font-medium transition-colors"
                     onClick={(e) => {
                       e.preventDefault();
                       localStorage.removeItem("token");
-                      window.location.href = "/signin";
+                      window.location.href = "/";
                     }}
                   >
                     <ArrowRightStartOnRectangleIcon className="inline-block mr-3 size-5" />

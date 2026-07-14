@@ -5,9 +5,9 @@ import { Heading } from "../components/Heading"
 import { InputBox } from "../components/InputBox"
 import { SubHeading } from "../components/Subheading"
 import axios from "axios";
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { toast } from 'sonner';
-import { CheckCircle, UserPlus } from 'lucide-react';
+import { CheckCircle, UserPlus, ArrowLeft } from 'lucide-react';
 
 export const Signup = () => {
   const [emailId, setEmail] = useState("");
@@ -33,13 +33,20 @@ export const Signup = () => {
         duration: 2000,
       });
       navigate("/dashboard");
-    } catch {
-      toast.error("Signup unsuccessful")
+    } catch (e) {
+      toast.error(e.response?.data?.message || "Signup unsuccessful")
     }
   };
 
   return (
     <div className="bg-slate-900 min-h-screen flex justify-center items-center relative overflow-hidden font-sans selection:bg-indigo-500/30 py-12">
+      
+      {/* Back to Home Link */}
+      <Link to="/" className="absolute top-8 left-8 flex items-center space-x-2 text-slate-400 hover:text-white transition-colors cursor-pointer group z-20">
+        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+        <span className="font-medium text-sm">Back to Home</span>
+      </Link>
+
       {/* Ambient background lights */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-600/20 blur-[120px] pointer-events-none fixed"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-emerald-600/20 blur-[120px] pointer-events-none fixed"></div>
@@ -56,7 +63,11 @@ export const Signup = () => {
             <div className="space-y-3 mt-4 text-left">
               <InputBox autoFocus={true} onChange={e => setEmail(e.target.value)} placeholder="youremail@company.com" label={"Email"} />
               <InputBox onChange={e => setUsername(e.target.value)} placeholder="Username" label={"Username"} />
-              <InputBox type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" label={"Password"} />
+              
+              <div>
+                <InputBox isPassword={true} onChange={e => setPassword(e.target.value)} placeholder="Password" label={"Password"} />
+                <p className="text-xs text-slate-400 mt-1.5 pl-1 font-medium">Must be 8-20 characters long.</p>
+              </div>
               
               <div className="grid grid-cols-2 gap-4">
                   <InputBox onChange={e => setFirstName(e.target.value)} placeholder="John" label={"First Name"} />

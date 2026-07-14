@@ -32,8 +32,8 @@ export const UpdatePassword = () => {
             setTimeout(() => {
                 navigate("/dashboard", { state: { updated: true } });
             }, 2000);
-        } catch {
-            toast.error("Update failed");
+        } catch (e) {
+            toast.error(e.response?.data?.message || "Update failed");
         }
     };
 
@@ -53,13 +53,16 @@ export const UpdatePassword = () => {
                     
                     <form onSubmit={handleUpdate}>
                         <div className="mt-6 text-left">
-                            <InputBox
-                                autoFocus={true}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="New password"
-                                label={"Password"}
-                                type="password"
-                            />
+                            <div>
+                                <InputBox
+                                    autoFocus={true}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="New password"
+                                    label={"Password"}
+                                    isPassword={true}
+                                />
+                                <p className="text-xs text-slate-400 mt-1.5 pl-1 font-medium">Must be 8-20 characters long.</p>
+                            </div>
                         </div>
                         <div className="pt-8">
                             <Button type="submit" label={"Change Password"} />
