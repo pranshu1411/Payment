@@ -61,7 +61,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/PayMe.git
+git clone https://github.com/pranshu1411/PayMe.git
 cd PayMe
 ```
 
