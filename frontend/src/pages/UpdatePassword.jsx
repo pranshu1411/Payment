@@ -45,7 +45,7 @@ export const UpdatePassword = () => {
                                     setTimeout(() => {
                                         navigate("/dashboard", { state: { updated: true } });
                                     }, 2000);
-                                } catch (err) {
+                                } catch {
                                     toast.error("Update failed");
                                 }
                             }}

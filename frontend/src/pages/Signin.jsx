@@ -37,7 +37,7 @@ export const Signin = () => {
                 icon: <CheckCircle className="text-green-500" />
               });
               navigate("/dashboard")
-            } catch (e) {
+            } catch {
               toast.error("Login unsuccessful")
             }
           }} label={"Sign in"} />

@@ -5,7 +5,7 @@ Lightweight payment/demo app with a Node.js + Express backend and a React (Vite)
 ## Contents
 
 - **Backend**: [backend](backend/) — Express API, MongoDB models, auth utilities.
-- **Frontend**: [frontend/vite-project](frontend/vite-project/) — React + Vite UI.
+- **Frontend**: [frontend](frontend/) — React + Vite UI.
 
 ## Prerequisites
 
@@ -34,7 +34,7 @@ npm run dev
 Frontend
 
 ```bash
-cd frontend/vite-project
+cd frontend
 npm install
 npm run dev
 ```
@@ -69,7 +69,7 @@ This project runs the backend on port `3000` and the Vite frontend on a dev port
 	 - Install and start the frontend:
 
 		 ```bash
-		 cd frontend/vite-project
+		 cd frontend
 		 npm install
 		 npm run dev
 		 ```
@@ -92,7 +92,7 @@ This project runs the backend on port `3000` and the Vite frontend on a dev port
 
 - Start MongoDB (if local): `mongod --dbpath /path/to/db` or use Atlas.
 - Start backend: `cd backend && npm run dev`.
-- Start frontend: `cd frontend/vite-project && npm run dev`.
+- Start frontend: `cd frontend && npm run dev`.
 - Open the Vite URL in your browser and sign in / sign up.
 
 ## Key Files
@@ -100,7 +100,7 @@ This project runs the backend on port `3000` and the Vite frontend on a dev port
 - Server entry: [backend/index.js](backend/index.js)
 - DB models: [backend/db/db.js](backend/db/db.js)
 - Auth helpers: [backend/utils/auth.js](backend/utils/auth.js)
-- Frontend entry: [frontend/vite-project/src/main.jsx](frontend/vite-project/src/main.jsx)
+- Frontend entry: [frontend/src/main.jsx](frontend/src/main.jsx)
 
 ## API Overview
 

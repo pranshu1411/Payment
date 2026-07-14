@@ -64,7 +64,7 @@ export const UserInfoUpdate = () => {
                   setTimeout(() => {
                     navigate("/dashboard", { state: { updated: true } });
                   }, 2000);
-                } catch (error) {
+                } catch {
                   toast.error("Update failed");
                 }
               }}

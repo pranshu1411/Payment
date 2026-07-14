@@ -53,7 +53,7 @@ export const Signup = () => {
                 duration: 2000,
               });
               navigate("/dashboard");
-            } catch (e) {
+            } catch {
               toast.error("Signup unsuccessful")
             }
 
