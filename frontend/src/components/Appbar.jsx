@@ -16,6 +16,8 @@ import {
   Cog6ToothIcon
 } from '@heroicons/react/24/outline';
 import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import logo from '../assets/payme-logo.png';
 
 const navigation = [
@@ -29,6 +31,40 @@ function classNames(...classes) {
 
 export const Appbar = () => {
   const location = useLocation();
+  const [notifications, setNotifications] = useState([]);
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/api/notifications", {
+          headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+        });
+        setNotifications(res.data);
+      } catch (e) {
+        console.error("Failed to fetch notifications:", e);
+      }
+    };
+    
+    // Only fetch if token exists
+    if (localStorage.getItem("token")) {
+        fetchNotifications();
+        const interval = setInterval(fetchNotifications, 10000); // poll every 10 seconds
+        return () => clearInterval(interval);
+    }
+  }, []);
+
+  const markAsRead = async () => {
+    if (unreadCount === 0) return;
+    try {
+      await axios.put("http://localhost:3000/api/notifications/read", {}, {
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+      });
+      setNotifications(notifications.map(n => ({...n, isRead: true})));
+    } catch (e) {
+      console.error("Failed to mark as read");
+    }
+  };
 
   return (
     <Disclosure as="nav" className="bg-slate-900/80 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
@@ -67,14 +103,48 @@ export const Appbar = () => {
             </div>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <button
-              type="button"
-              className="relative rounded-full bg-slate-800/50 p-2 text-slate-400 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-hidden transition-colors border border-white/5 hover:bg-slate-700/50"
-            >
-              <span className="absolute -inset-1.5" />
-              <span className="sr-only">View notifications</span>
-              <BellIcon className="size-5" aria-hidden="true" />
-            </button>
+            {/* Notifications dropdown */}
+            <Menu as="div" className="relative">
+              <MenuButton 
+                onClick={markAsRead}
+                className="group relative rounded-full bg-slate-800/50 p-2 text-slate-400 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-hidden transition-colors border border-white/5 hover:bg-slate-700/50"
+              >
+                <span className="absolute -inset-1.5" />
+                <span className="sr-only">View notifications</span>
+                <BellIcon className="size-5" aria-hidden="true" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-slate-900" />
+                )}
+              </MenuButton>
+              <MenuItems
+                transition
+                className="absolute right-0 z-10 mt-3 w-80 origin-top-right rounded-xl bg-slate-800/95 backdrop-blur-xl py-2 shadow-2xl ring-1 ring-white/10 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-75 data-leave:ease-in border border-white/10 overflow-hidden"
+              >
+                <div className="px-4 py-3 border-b border-white/5">
+                  <p className="text-sm font-semibold text-white">Notifications</p>
+                </div>
+                <div className="max-h-80 overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="px-4 py-6 text-center text-sm text-slate-400">
+                      No notifications yet
+                    </div>
+                  ) : (
+                    notifications.map((notif) => (
+                      <MenuItem key={notif._id}>
+                        <div className="px-4 py-3 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 flex flex-col gap-1">
+                          <p className={`text-sm ${notif.isRead ? 'text-slate-300' : 'text-white font-medium'}`}>
+                            {notif.message}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            {new Date(notif.createdAt).toLocaleDateString()} at {new Date(notif.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                          </p>
+                        </div>
+                      </MenuItem>
+                    ))
+                  )}
+                </div>
+              </MenuItems>
+            </Menu>
 
             {/* Profile dropdown */}
             <Menu as="div" className="relative ml-4">

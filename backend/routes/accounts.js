@@ -1,6 +1,6 @@
 const express = require('express');
 const { userMiddleware } = require('../middleware/userAuth');
-const { User, Account, Transaction } = require('../db/db');
+const { User, Account, Transaction, Notification } = require('../db/db');
 const mongoose = require('mongoose');
 
 const router = express.Router();
@@ -57,6 +57,7 @@ router.post("/transfer", userMiddleware, async (req, res) => {
 
             return res.status(400).json({ message: "Recipient not found" });
         }
+        
         const toAccount = await Account.findOne({ userId: recipient._id }).session(session);
         if (!toAccount) {
             await session.abortTransaction();
@@ -73,6 +74,13 @@ router.post("/transfer", userMiddleware, async (req, res) => {
             status: "success"
         });
         await txn.save({ session });
+
+        const sender = await User.findById(req.userId).session(session);
+        const notification = new Notification({
+            userId: recipient._id,
+            message: `You received ₹${amount} from ${sender.firstName} ${sender.lastName}`
+        });
+        await notification.save({ session });
 
         await session.commitTransaction();
         res.json({ message: "Transfer successful" });
