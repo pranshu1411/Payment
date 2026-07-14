@@ -131,8 +131,22 @@ router.get("/history", userMiddleware, async (req, res) => {
         .sort({ createdAt: -1 });
 
         const history = transactions.map(t => {
-            const isSender = t.fromAccount._id.toString() === userAccount._id.toString();
-            const counterparty = isSender ? t.toAccount.userId : t.fromAccount.userId;
+            let isSender = false;
+            let counterparty = null;
+
+            if (t.fromAccount && t.fromAccount._id.toString() === userAccount._id.toString()) {
+                isSender = true;
+                counterparty = t.toAccount ? t.toAccount.userId : null;
+            } else if (t.toAccount && t.toAccount._id.toString() === userAccount._id.toString()) {
+                isSender = false;
+                counterparty = t.fromAccount ? t.fromAccount.userId : null;
+            } else if (!t.fromAccount) {
+                // If fromAccount is deleted, we must be the recipient
+                isSender = false;
+            } else if (!t.toAccount) {
+                // If toAccount is deleted, we must be the sender
+                isSender = true;
+            }
 
             return {
                 id: t.transactionId,
@@ -140,10 +154,14 @@ router.get("/history", userMiddleware, async (req, res) => {
                 amount: t.amount,
                 status: t.status,
                 date: t.createdAt,
-                counterparty: {
+                counterparty: counterparty ? {
                     firstName: counterparty.firstName,
                     lastName: counterparty.lastName,
                     username: counterparty.username
+                } : {
+                    firstName: "Deleted",
+                    lastName: "User",
+                    username: "deleted_user"
                 }
             };
         });

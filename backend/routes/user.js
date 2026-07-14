@@ -1,7 +1,8 @@
 const express = require('express');
 const zod = require('zod');
 const router = express.Router();
-const { User, Account } = require('../db/db');
+const { User, Account, Notification } = require('../db/db');
+const mongoose = require('mongoose');
 const { generateToken, hashPassword, verifyPassword } = require('../utils/auth');
 const { userMiddleware } = require('../middleware/userAuth');
 
@@ -206,5 +207,39 @@ router.get('/allusers', async (req, res) => {
     });
 });
 
+
+router.get('/me', userMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.userId).select('firstName lastName username emailId');
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json(user);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+
+router.delete('/delete', userMiddleware, async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        await User.deleteOne({ _id: req.userId }).session(session);
+        await Account.deleteOne({ userId: req.userId }).session(session);
+        await Notification.deleteMany({ userId: req.userId }).session(session);
+
+        await session.commitTransaction();
+        res.status(200).json({ message: "Account deleted successfully" });
+    } catch (err) {
+        await session.abortTransaction();
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    } finally {
+        session.endSession();
+    }
+});
 
 module.exports = router;

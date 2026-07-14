@@ -15,20 +15,22 @@ export const Home = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-10 flex items-center justify-between px-6 py-6 max-w-7xl mx-auto border-b border-white/5">
-        <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
-          <img src={logo} alt="PayMe Logo" className="h-10 w-10 drop-shadow-[0_0_12px_rgba(255,255,255,0.4)]" />
-          <span className="text-2xl font-black tracking-tight text-white">PayMe</span>
-        </div>
-        <div className="flex items-center space-x-6">
-          <button 
-            onClick={() => navigate('/signin')}
-            className="text-sm font-medium text-slate-300 hover:text-white transition-colors focus:outline-none cursor-pointer"
-          >
-            Sign In
-          </button>
-          <div className="w-32">
-            <Button onClick={() => navigate('/signup')} label="Get Started" />
+      <nav className="sticky top-0 z-50 w-full bg-slate-900/80 backdrop-blur-md border-b border-white/10">
+        <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
+          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
+            <img src={logo} alt="PayMe Logo" className="h-10 w-10 drop-shadow-[0_0_12px_rgba(255,255,255,0.4)]" />
+            <span className="text-2xl font-black tracking-tight text-white">PayMe</span>
+          </div>
+          <div className="flex items-center space-x-6">
+            <button 
+              onClick={() => navigate('/signin')}
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors focus:outline-none cursor-pointer"
+            >
+              Sign In
+            </button>
+            <div className="w-32">
+              <Button onClick={() => navigate('/signup')} label="Get Started" />
+            </div>
           </div>
         </div>
       </nav>

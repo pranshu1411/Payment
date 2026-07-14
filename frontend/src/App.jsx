@@ -18,7 +18,7 @@ function App() {
   return (
     <>
        <BrowserRouter>
-       <Toaster richColors position="top-right" />
+       <Toaster richColors position="top-right" closeButton />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
