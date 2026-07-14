@@ -7,43 +7,57 @@ import { useState } from "react"
 import axios from "axios";
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner";
-import { CheckCircle } from "lucide-react"
+import { CheckCircle, Lock } from "lucide-react"
 
 export const Signin = () => {
   const [emailId, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  return <div className="bg-slate-300 h-screen flex justify-center">
-    <div className="flex flex-col justify-center">
-      <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
-        <Heading label={"Sign in"} />
-        <SubHeading label={"Enter your credentials to access your account"} />
-        <InputBox onChange={e => {
-          setEmail(e.target.value);
-        }} placeholder="Email" label={"Email"} />
-        <InputBox type="password" onChange={e => {
-          setPassword(e.target.value);
-        }} placeholder="Password" label={"Password"} />
-        <div className="pt-4">
-          <Button onClick={async () => {
-            try {
-              const response = await axios.post("http://localhost:3000/api/user/signin", {
-                emailId,
-                password
-              });
-              localStorage.setItem("token", response.data.token)
-              toast.success("Login Successful", {
-                icon: <CheckCircle className="text-green-500" />
-              });
-              navigate("/dashboard")
-            } catch {
-              toast.error("Login unsuccessful")
-            }
-          }} label={"Sign in"} />
+  const handleSignin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:3000/api/user/signin", {
+        emailId,
+        password
+      });
+      localStorage.setItem("token", response.data.token)
+      toast.success("Login Successful", {
+        icon: <CheckCircle className="text-emerald-500" />
+      });
+      navigate("/dashboard")
+    } catch {
+      toast.error("Login unsuccessful")
+    }
+  };
+
+  return (
+    <div className="bg-slate-900 min-h-screen flex justify-center items-center relative overflow-hidden font-sans selection:bg-indigo-500/30">
+      {/* Ambient background lights */}
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-600/20 blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-emerald-600/20 blur-[120px] pointer-events-none"></div>
+
+      <div className="relative z-10 w-full max-w-md px-6">
+        <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10 text-center">
+          <div className="bg-indigo-500/20 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-indigo-500/30">
+            <Lock className="w-8 h-8 text-indigo-400" />
+          </div>
+          <Heading label={"Welcome Back"} />
+          <SubHeading label={"Enter your credentials to access your account"} />
+          
+          <form onSubmit={handleSignin}>
+            <div className="space-y-4 mt-6 text-left">
+              <InputBox autoFocus={true} onChange={e => setEmail(e.target.value)} placeholder="Email" label={"Email"} />
+              <InputBox type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" label={"Password"} />
+            </div>
+
+            <div className="pt-8">
+              <Button type="submit" label={"Sign In"} />
+            </div>
+          </form>
+          <BottomWarning label={"Don't have an account?"} buttonText={"Sign up"} to={"/signup"} />
         </div>
-        <BottomWarning label={"Don't have an account?"} buttonText={"Sign up"} to={"/signup"} />
       </div>
     </div>
-  </div>
+  )
 }

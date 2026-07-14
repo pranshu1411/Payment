@@ -3,7 +3,8 @@ import { Button } from "./Button"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-
+import { Search } from "lucide-react";
+import React, { useRef } from "react";
 
 export const Users = () => {
   const [users, setUsers] = useState([]);
@@ -38,47 +39,65 @@ export const Users = () => {
       });
   }, [filter]);
 
+  const searchInputRef = useRef(null);
+  React.useEffect(() => {
+      const handleKeyDown = (e) => {
+          if (e.key === '/' && document.activeElement !== searchInputRef.current) {
+              e.preventDefault();
+              searchInputRef.current?.focus();
+          }
+      };
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
-
-  return <div>
-    <div className="font-bold mt-6 text-lg">
-      Users
+  return <div className="mt-12">
+    <div className="font-extrabold text-2xl text-white mb-6">
+      Contacts
     </div>
-    <div className="my-2">
-      <input onChange={(e) => {
-        setFilter(e.target.value)
-      }} type="text" placeholder="Search users..." className="w-full px-2 py-1 border rounded border-slate-200"></input>
+    <div className="my-4 relative">
+      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+        <Search className="h-5 w-5 text-slate-400" />
+      </div>
+      <input 
+        ref={searchInputRef}
+        onChange={(e) => setFilter(e.target.value)} 
+        type="text" 
+        placeholder="Search for friends or merchants... (Press / to focus)" 
+        className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-200 backdrop-blur-sm shadow-sm"
+      />
     </div>
-    <div>
-      {users.map(user => <User key={user._id} user={user} />)}
+    <div className="space-y-4 mt-6">
+      {users.map((user, idx) => <User key={user._id} user={user} index={idx} />)}
     </div>
   </div>
 }
 
-function User({ user }) {
+function User({ user, index }) {
   const navigate = useNavigate();
 
   return (
-    <div className="grid grid-cols-3 items-center py-3 px-4 bg-white rounded-lg shadow-sm mb-3">
-      {/* Avatar + Name */}
-      <div className="flex items-center">
-        <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center items-center text-xl font-semibold text-gray-700 mr-3">
+    <div 
+      className="group flex flex-col sm:flex-row sm:items-center justify-between py-4 px-5 bg-white/5 backdrop-blur-md rounded-2xl shadow-lg border border-white/10 hover:bg-white/10 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 relative overflow-hidden"
+    >
+      {/* Subtle hover glow */}
+      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none -translate-x-full group-hover:translate-x-full"></div>
+
+      <div className="flex items-center space-x-4 mb-4 sm:mb-0 relative z-10">
+        <div className="rounded-full h-14 w-14 bg-indigo-500/20 border border-indigo-500/30 flex justify-center items-center text-2xl font-black text-indigo-400 shadow-inner group-hover:bg-indigo-500/30 transition-colors">
           {user.firstName[0].toUpperCase()}
         </div>
         <div>
-          <div className="font-medium">
+          <div className="font-bold text-xl text-white tracking-wide">
             {user.firstName} {user.lastName}
+          </div>
+          <div className="text-sm text-slate-400 font-medium tracking-wide">
+            @{user.username}
           </div>
         </div>
       </div>
 
-      {/* Username column */}
-      <div className="text-sm text-gray-600 font-mono">
-        @{user.username}
-      </div>
-
-      {/* Send Money button */}
-      <div className="flex justify-end">
+      <div className="flex justify-end w-full sm:w-40 relative z-10">
         <Button
           onClick={() => {
             navigate("/send?id=" + user._id + "&name=" + user.firstName + "&username=" + user.username);

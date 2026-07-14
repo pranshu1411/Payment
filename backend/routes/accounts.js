@@ -96,4 +96,55 @@ router.post("/transfer", userMiddleware, async (req, res) => {
 });
 
 
+router.get("/history", userMiddleware, async (req, res) => {
+    try {
+        const userAccount = await Account.findOne({ userId: req.userId });
+        if (!userAccount) {
+            return res.status(404).json({ message: "Account not found" });
+        }
+
+        const transactions = await Transaction.find({
+            $or: [{ fromAccount: userAccount._id }, { toAccount: userAccount._id }]
+        })
+        .populate({
+            path: 'fromAccount',
+            populate: {
+                path: 'userId',
+                select: 'firstName lastName username'
+            }
+        })
+        .populate({
+            path: 'toAccount',
+            populate: {
+                path: 'userId',
+                select: 'firstName lastName username'
+            }
+        })
+        .sort({ createdAt: -1 });
+
+        const history = transactions.map(t => {
+            const isSender = t.fromAccount._id.toString() === userAccount._id.toString();
+            const counterparty = isSender ? t.toAccount.userId : t.fromAccount.userId;
+
+            return {
+                id: t.transactionId,
+                type: isSender ? 'sent' : 'received',
+                amount: t.amount,
+                status: t.status,
+                date: t.createdAt,
+                counterparty: {
+                    firstName: counterparty.firstName,
+                    lastName: counterparty.lastName,
+                    username: counterparty.username
+                }
+            };
+        });
+
+        res.status(200).json(history);
+    } catch (err) {
+        console.error("Error fetching history:", err.message);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 module.exports = router;

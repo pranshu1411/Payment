@@ -7,51 +7,64 @@ import { Heading } from "../components/Heading";
 import { SubHeading } from "../components/Subheading";
 import { Appbar } from "../components/Appbar";
 import { toast } from 'sonner';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, ShieldCheck } from 'lucide-react';
 
 export const UpdatePassword = () => {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.put(
+                "http://localhost:3000/api/user/update/password",
+                { password },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                }
+            );
+            toast.success("Password Updated", {
+                icon: <CheckCircle className='text-emerald-500' />,
+                duration: 3000,
+            });
+            setTimeout(() => {
+                navigate("/dashboard", { state: { updated: true } });
+            }, 2000);
+        } catch {
+            toast.error("Update failed");
+        }
+    };
+
     return (
-        <div className="bg-slate-300 h-screen flex flex-col">
+        <div className="bg-slate-900 min-h-screen text-slate-100 font-sans selection:bg-indigo-500/30 relative overflow-hidden flex flex-col">
             <Appbar />
-            <div className="flex flex-1 justify-center items-center">
-                <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
-                    <Heading label={"Update Your Password"} />
-                    <SubHeading label={"Enter new Password"} />
-                    <InputBox
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Password"
-                        label={"Password"}
-                    />
-                    <div className="pt-4">
-                        <Button
-                            onClick={async () => {
-                                try {
-                                    await axios.put(
-                                        "http://localhost:3000/api/user/update/password",
-                                        { password },
-                                        {
-                                            headers: {
-                                                Authorization: `Bearer ${localStorage.getItem("token")}`,
-                                            },
-                                        }
-                                    );
-                                    toast.success("Password Updated", {
-                                        icon: <CheckCircle className='text-green-500' />,
-                                        duration: 3000,
-                                    });
-                                    setTimeout(() => {
-                                        navigate("/dashboard", { state: { updated: true } });
-                                    }, 2000);
-                                } catch {
-                                    toast.error("Update failed");
-                                }
-                            }}
-                            label={"Update Password"}
-                        />
+
+            <div className="absolute top-[20%] right-[20%] w-[40%] h-[40%] rounded-full bg-emerald-600/20 blur-[120px] pointer-events-none"></div>
+
+            <div className="flex flex-1 justify-center items-center relative z-10 px-4">
+                <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10 text-center w-full max-w-md">
+                    <div className="bg-emerald-500/20 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-emerald-500/30">
+                        <ShieldCheck className="w-8 h-8 text-emerald-400" />
                     </div>
+                    <Heading label={"Security"} />
+                    <SubHeading label={"Enter your new secure password"} />
+                    
+                    <form onSubmit={handleUpdate}>
+                        <div className="mt-6 text-left">
+                            <InputBox
+                                autoFocus={true}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="New password"
+                                label={"Password"}
+                                type="password"
+                            />
+                        </div>
+                        <div className="pt-8">
+                            <Button type="submit" label={"Change Password"} />
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
